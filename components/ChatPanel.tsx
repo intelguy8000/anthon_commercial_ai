@@ -264,14 +264,14 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
             {!isLoading && (
               <button
                 onClick={() => setUseOpus(!useOpus)}
-                className={`px-3 py-1 text-xs rounded-lg font-semibold transition-colors ${
+                className={`px-3 py-1 text-xs rounded-lg font-semibold transition-colors whitespace-nowrap ${
                   useOpus
                     ? 'bg-purple-600 text-white border-2 border-purple-700 hover:bg-purple-700'
                     : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300'
                 }`}
                 title={useOpus ? "Siguiente mensaje usará Opus 4.1" : "Activar LoopAI Pro (Opus 4.1)"}
               >
-                🧠 {useOpus ? 'Pro ACTIVADO' : 'LoopAI Pro'}
+                {useOpus ? '🧠 Pro ON' : '🧠 LoopAI Pro'}
               </button>
             )}
             {/* Expand button */}

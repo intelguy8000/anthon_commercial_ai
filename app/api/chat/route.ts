@@ -1307,14 +1307,8 @@ ${guiaNegociacion}
 **Para generar/mostrar propuestas en el preview:**
 Cuando Santiago pida "muéstrame la propuesta", "genera propuesta", o "actualiza el preview":
 1. Responde brevemente confirmando que generarás la propuesta
-2. Genera el contenido completo en un bloque de código markdown así:
-
-\`\`\`markdown
-# 💼 PROPUESTA COMERCIAL - ESTUDIARTE
-[...contenido completo de la propuesta aquí...]
-\`\`\`
-
-3. El sistema automáticamente detectará el bloque ```markdown y lo mostrará en el panel de Vista Previa
+2. Genera el contenido completo en un bloque de código markdown (usa triple backtick + markdown)
+3. El sistema automáticamente detectará el bloque markdown y lo mostrará en el panel de Vista Previa
 4. Asegúrate de que sea profesional y bien estructurado
 5. Incluye todos los elementos visuales (emojis, tablas, listas)
 
