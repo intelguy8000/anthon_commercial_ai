@@ -41,18 +41,15 @@ export default function PreviewPanel({ content }: PreviewPanelProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
+    <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-secondary flex justify-between items-center">
-        <div>
-          <h2 className="text-xl font-bold text-white">📄 Vista Previa</h2>
-          <p className="text-sm text-white/80 mt-1">Propuesta en Markdown</p>
-        </div>
+      <div className="px-4 py-2 border-b border-gray-200 bg-white flex justify-between items-center">
+        <h2 className="text-sm font-semibold text-gray-700">📄 Vista Previa</h2>
         <button
           onClick={handleExportPDF}
-          className="px-4 py-2 bg-white text-secondary rounded-lg hover:bg-gray-100 font-semibold text-sm"
+          className="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-xs"
         >
-          📥 Exportar PDF
+          📥 PDF
         </button>
       </div>
 
@@ -85,7 +82,7 @@ export default function PreviewPanel({ content }: PreviewPanelProps) {
         ) : (
           <div className="text-center text-gray-500 mt-16">
             <p className="text-lg font-semibold mb-2">Sin contenido aún</p>
-            <p className="text-sm">La propuesta aparecerá aquí cuando hables con Lupia.</p>
+            <p className="text-sm">La propuesta aparecerá aquí cuando hables con Loop<span className="text-purple-600">IA</span>.</p>
           </div>
         )}
       </div>

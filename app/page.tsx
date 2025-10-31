@@ -19,14 +19,13 @@ export default function Home() {
     <div className="h-screen w-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 flex-shrink-0">
-        <div className="px-6 py-3 flex items-center justify-between">
+        <div className="px-6 py-2 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-xl">✨</span>
-            </div>
+            <img src="/loopera-logo.png" alt="Loopera" className="h-8" />
+            <div className="h-8 w-px bg-gray-300"></div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">Lupia</h1>
-              <p className="text-xs text-gray-500">Asistente Comercial IA</p>
+              <h1 className="text-base font-semibold text-gray-900">Loop<span className="text-purple-600">IA</span></h1>
+              <p className="text-xs text-gray-500">Hola Santiago 👋</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

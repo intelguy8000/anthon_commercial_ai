@@ -112,18 +112,17 @@ export default function ChatPanel({ onProposalUpdate }: ChatPanelProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-primary">
-        <h2 className="text-xl font-bold text-white">💬 Chat con Lupia</h2>
-        <p className="text-sm text-white/80 mt-1">Tu asistente comercial IA</p>
+    <div className="flex flex-col h-full bg-white">
+      {/* Header - Simplified */}
+      <div className="px-4 py-2 border-b border-gray-200 bg-white">
+        <h2 className="text-sm font-semibold text-gray-700">💬 Chat con Loop<span className="text-purple-600">IA</span></h2>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
-            <p className="text-lg font-semibold mb-2">¡Hola! Soy Lupia 👋</p>
+            <p className="text-lg font-semibold mb-2">¡Hola! Soy Loop<span className="text-purple-600">IA</span> 👋</p>
             <p className="text-sm">Estoy aquí para ayudarte con la propuesta de Estudiarte.</p>
             <p className="text-sm mt-2">Pregúntame lo que necesites.</p>
           </div>

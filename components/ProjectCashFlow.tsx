@@ -102,86 +102,91 @@ export default function ProjectCashFlow({ projectCost = 38, weeksTimeline = 8 }:
   const profitMargin = ((looperaProfit / totalClientPays) * 100).toFixed(0);
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-2xl border border-gray-200 p-6">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Modelo Financiero del Proyecto</h3>
-        <p className="text-xs text-gray-500 mt-1">Flujo de caja semana a semana • Total: ${projectCost}M COP</p>
+    <div className="h-full flex flex-col bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      {/* Header */}
+      <div className="px-4 py-2 border-b border-gray-200 bg-gray-50">
+        <h3 className="text-sm font-semibold text-gray-700">📊 Modelo Financiero</h3>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3 text-white">
-          <div className="text-xs opacity-90 mb-1">Cliente Paga</div>
-          <div className="text-xl font-bold">${totalClientPays.toFixed(1)}M</div>
+      <div className="flex-1 overflow-y-auto p-4">
+        {/* Summary Section */}
+        <div className="mb-4 grid grid-cols-3 gap-2 text-xs">
+          <div className="bg-blue-50 rounded p-2 border border-blue-200">
+            <div className="text-blue-600 font-medium">Cliente Paga</div>
+            <div className="text-lg font-bold text-blue-700">${totalClientPays.toFixed(1)}M</div>
+          </div>
+          <div className="bg-red-50 rounded p-2 border border-red-200">
+            <div className="text-red-600 font-medium">Loopera Gasta</div>
+            <div className="text-lg font-bold text-red-700">${totalLooperaSpends.toFixed(1)}M</div>
+          </div>
+          <div className="bg-green-50 rounded p-2 border border-green-200">
+            <div className="text-green-600 font-medium">Margen</div>
+            <div className="text-lg font-bold text-green-700">{profitMargin}%</div>
+          </div>
         </div>
-        <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-3 text-white">
-          <div className="text-xs opacity-90 mb-1">Loopera Gasta</div>
-          <div className="text-xl font-bold">${totalLooperaSpends.toFixed(1)}M</div>
-        </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-3 text-white">
-          <div className="text-xs opacity-90 mb-1">Margen</div>
-          <div className="text-xl font-bold">{profitMargin}%</div>
-        </div>
-      </div>
 
-      {/* Weekly Breakdown */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
-        <div className="space-y-2">
-          {weeks.slice(0, weeksTimeline).map((week) => (
-            <div key={week.week} className="bg-gray-50 rounded-lg p-3 border border-gray-200 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-full bg-${week.color}-500 flex items-center justify-center text-white text-xs font-bold`}>
-                    S{week.week}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-gray-900">{week.phase}</div>
-                  </div>
-                </div>
-                <div className={`text-xs font-bold px-2 py-1 rounded ${
-                  week.looperaBalance > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                }`}>
-                  {week.looperaBalance > 0 ? '+' : ''}{week.looperaBalance.toFixed(1)}M
-                </div>
+        {/* Excel-style Table */}
+        <div className="border border-gray-300 rounded-lg overflow-hidden">
+          {/* Table Header */}
+          <div className="grid grid-cols-[140px,1fr,1fr,1fr] bg-gray-100 border-b border-gray-300 text-xs font-semibold text-gray-700">
+            <div className="p-2 border-r border-gray-300">Fase</div>
+            <div className="p-2 border-r border-gray-300 text-right">Cliente Paga</div>
+            <div className="p-2 border-r border-gray-300 text-right">Loopera Gasta</div>
+            <div className="p-2 text-right">Balance</div>
+          </div>
+
+          {/* Table Rows */}
+          {weeks.slice(0, weeksTimeline).map((week, index) => (
+            <div
+              key={week.week}
+              className={`grid grid-cols-[140px,1fr,1fr,1fr] text-xs border-b border-gray-200 hover:bg-gray-50 ${
+                index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+              }`}
+            >
+              <div className="p-2 border-r border-gray-200 font-medium text-gray-900">
+                S{week.week}: {week.phase}
               </div>
-
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-white rounded p-2">
-                  <div className="text-gray-500 mb-1">Cliente paga</div>
-                  <div className="font-semibold text-blue-600">
-                    {week.clientPays > 0 ? `+$${week.clientPays.toFixed(1)}M` : '-'}
-                  </div>
-                </div>
-                <div className="bg-white rounded p-2">
-                  <div className="text-gray-500 mb-1">Loopera gasta</div>
-                  <div className="font-semibold text-red-600">
-                    {week.looperaSpends > 0 ? `-$${week.looperaSpends.toFixed(1)}M` : '-'}
-                  </div>
-                </div>
+              <div className="p-2 border-r border-gray-200 text-right font-semibold text-blue-600">
+                {week.clientPays > 0 ? `$${week.clientPays.toFixed(1)}M` : '-'}
               </div>
-
-              {week.clientSpends > 0 && (
-                <div className="mt-2 text-xs text-gray-600 bg-yellow-50 rounded p-2">
-                  💰 Cliente también paga: ${week.clientSpends}M COP (Azure + servicios)
-                </div>
-              )}
+              <div className="p-2 border-r border-gray-200 text-right font-semibold text-red-600">
+                {week.looperaSpends > 0 ? `$${week.looperaSpends.toFixed(1)}M` : '-'}
+              </div>
+              <div className={`p-2 text-right font-bold ${
+                week.looperaBalance > 0 ? 'text-green-700' : 'text-red-700'
+              }`}>
+                {week.looperaBalance > 0 ? '+' : ''}{week.looperaBalance.toFixed(1)}M
+              </div>
             </div>
           ))}
-        </div>
-      </div>
 
-      {/* Post-Project Recurring */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="text-xs font-semibold text-gray-700 mb-2">Mensualidad Post-Proyecto:</div>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
-            <div className="text-purple-600 font-medium">Loopera Cobra</div>
-            <div className="text-lg font-bold text-purple-700">$350 USD/mes</div>
+          {/* Total Row */}
+          <div className="grid grid-cols-[140px,1fr,1fr,1fr] text-xs bg-gray-200 font-bold">
+            <div className="p-2 border-r border-gray-300 text-gray-900">TOTAL</div>
+            <div className="p-2 border-r border-gray-300 text-right text-blue-700">
+              ${totalClientPays.toFixed(1)}M
+            </div>
+            <div className="p-2 border-r border-gray-300 text-right text-red-700">
+              ${totalLooperaSpends.toFixed(1)}M
+            </div>
+            <div className="p-2 text-right text-green-700">
+              +${looperaProfit.toFixed(1)}M
+            </div>
           </div>
-          <div className="bg-orange-50 rounded-lg p-2 border border-orange-200">
-            <div className="text-orange-600 font-medium">Cliente Gasta</div>
-            <div className="text-lg font-bold text-orange-700">$68 USD/mes</div>
-            <div className="text-xs text-orange-600">(Azure + servicios)</div>
+        </div>
+
+        {/* Post-Project */}
+        <div className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+          <div className="text-xs font-semibold text-purple-700 mb-2">💰 Mensualidad Recurrente</div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <span className="text-purple-600 font-medium">Loopera: </span>
+              <span className="font-bold text-purple-900">$350 USD/mes</span>
+            </div>
+            <div>
+              <span className="text-purple-600 font-medium">Cliente: </span>
+              <span className="font-bold text-purple-900">$68 USD/mes</span>
+            </div>
           </div>
         </div>
       </div>

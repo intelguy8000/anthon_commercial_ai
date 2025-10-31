@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lupia - Asistente Comercial IA",
+  title: "LoopIA - Asistente Comercial IA de Loopera",
   description: "Copiloto de IA para crear y negociar propuestas comerciales en tiempo real",
 };
 
