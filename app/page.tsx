@@ -45,6 +45,10 @@ export default function Home() {
           <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
             <ChatPanel
               onProposalUpdate={setProposalContent}
+              onFinancialUpdate={(price, weeks) => {
+                setProjectCost(price);
+                setWeeksTimeline(weeks);
+              }}
               isExpanded={expandedPanel === 'chat'}
               onToggleExpand={() => setExpandedPanel(expandedPanel === 'chat' ? null : 'chat')}
             />
@@ -83,6 +87,10 @@ export default function Home() {
             {expandedPanel === 'chat' ? (
               <ChatPanel
                 onProposalUpdate={setProposalContent}
+                onFinancialUpdate={(price, weeks) => {
+                  setProjectCost(price);
+                  setWeeksTimeline(weeks);
+                }}
                 isExpanded={true}
                 onToggleExpand={() => setExpandedPanel(null)}
               />

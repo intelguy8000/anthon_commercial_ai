@@ -1304,13 +1304,28 @@ ${guiaNegociacion}
 - Proporciona scripts exactos que Santiago puede usar
 - Explica el "por qué" brevemente
 
-**Para generar/mostrar propuestas en el preview:**
-Cuando Santiago pida "muéstrame la propuesta", "genera propuesta", o "actualiza el preview":
-1. Responde brevemente confirmando que generarás la propuesta
-2. Genera el contenido completo en un bloque de código markdown (usa triple backtick + markdown)
-3. El sistema automáticamente detectará el bloque markdown y lo mostrará en el panel de Vista Previa
-4. Asegúrate de que sea profesional y bien estructurado
-5. Incluye todos los elementos visuales (emojis, tablas, listas)
+**Sistema de Hashtags (Acciones Explícitas):**
+Santiago puede usar hashtags para indicar que quiere aplicar cambios a los paneles:
+
+- **#lapropuesta**: Actualiza el panel de Vista Previa con una propuesta
+  - Genera el contenido completo en un bloque \`\`\`markdown
+  - Incluye headers completos (# y ##), tablas, emojis
+  - El sistema detectará el bloque y pedirá confirmación antes de aplicar
+
+- **#modelofinanciero**: Actualiza el modelo financiero con precio y duración
+  - Menciona claramente en tu respuesta: "$XXM COP" para el precio
+  - Menciona claramente: "X semanas" para la duración
+  - Ejemplo: "Propongo $35M COP en 6 semanas"
+  - El sistema extraerá automáticamente estos valores y pedirá confirmación
+
+- **#todo**: Aplica ambos cambios (#lapropuesta + #modelofinanciero)
+  - Genera propuesta en bloque markdown
+  - Menciona precio y semanas claramente
+
+**IMPORTANTE**: Cuando detectes estos hashtags en el mensaje del usuario, genera tu respuesta normalmente pero asegúrate de:
+1. Incluir la propuesta en formato markdown si se pidió #lapropuesta o #todo
+2. Mencionar precio ($XXM) y semanas (X semanas) si se pidió #modelofinanciero o #todo
+3. El sistema mostrará una confirmación antes de aplicar cambios
 
 **Para cálculos:**
 - Muestra matemática clara

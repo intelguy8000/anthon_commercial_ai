@@ -9,15 +9,25 @@ interface Message {
 
 interface ChatPanelProps {
   onProposalUpdate: (content: string) => void;
+  onFinancialUpdate?: (price: number, weeks: number) => void;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+}
+
+interface PendingAction {
+  type: 'proposal' | 'financial' | 'both';
+  proposalContent?: string;
+  financialData?: {
+    price: number;
+    weeks: number;
+  };
 }
 
 const STORAGE_KEY = 'loopia-chat-history';
 const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const WARNING_THRESHOLD = 0.8; // 80% of max storage
 
-export default function ChatPanel({ onProposalUpdate, isExpanded = false, onToggleExpand }: ChatPanelProps) {
+export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpanded = false, onToggleExpand }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -25,10 +35,28 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
   const [showStorageWarning, setShowStorageWarning] = useState(false);
   const [useOpus, setUseOpus] = useState(false);
   const [abortController, setAbortController] = useState<AbortController | null>(null);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Detect hashtags in message
+  const detectHashtags = (text: string): string[] => {
+    const hashtagMatch = text.match(/#\w+/g);
+    return hashtagMatch || [];
+  };
+
+  // Extract financial data from message
+  const extractFinancialData = (text: string) => {
+    const priceMatch = text.match(/\$?(\d+)M/i);
+    const weeksMatch = text.match(/(\d+)\s*semanas?/i);
+
+    return {
+      price: priceMatch ? parseInt(priceMatch[1]) : null,
+      weeks: weeksMatch ? parseInt(weeksMatch[1]) : null,
+    };
   };
 
   // Calculate storage usage
@@ -86,6 +114,8 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = { role: 'user', content: input };
+    const userHashtags = detectHashtags(input);
+
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -100,7 +130,8 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [...messages, userMessage],
-          useOpus: useOpus, // Send flag to use Opus if activated
+          useOpus: useOpus,
+          hashtags: userHashtags, // Pass detected hashtags
         }),
         signal: controller.signal,
       });
@@ -144,23 +175,52 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
                     }
                     return newMessages;
                   });
-
-                  // Detect and extract proposal content
-                  // Check for markdown code block with proposal
-                  const markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*?)```/);
-                  if (markdownMatch && markdownMatch[1].trim()) {
-                    const proposalContent = markdownMatch[1].trim();
-                    // Only update if it looks like a real proposal (has headers)
-                    if (proposalContent.includes('# ') || proposalContent.includes('## ')) {
-                      onProposalUpdate(proposalContent);
-                    }
-                  }
                 }
               } catch (e) {
                 // Ignore parse errors for incomplete chunks
               }
             }
           }
+        }
+      }
+
+      // After streaming completes, process hashtags
+      if (userHashtags.length > 0) {
+        const hasProposal = userHashtags.some(tag => tag.toLowerCase() === '#lapropuesta' || tag.toLowerCase() === '#todo');
+        const hasFinancial = userHashtags.some(tag => tag.toLowerCase() === '#modelofinanciero' || tag.toLowerCase() === '#todo');
+
+        let pendingProposal: string | undefined;
+        let pendingFinancial: { price: number; weeks: number } | undefined;
+
+        // Extract proposal from assistant message
+        if (hasProposal) {
+          const markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*?)```/);
+          if (markdownMatch && markdownMatch[1].trim()) {
+            const proposalContent = markdownMatch[1].trim();
+            if (proposalContent.includes('# ') || proposalContent.includes('## ')) {
+              pendingProposal = proposalContent;
+            }
+          }
+        }
+
+        // Extract financial data
+        if (hasFinancial) {
+          const financialData = extractFinancialData(assistantMessage);
+          if (financialData.price && financialData.weeks) {
+            pendingFinancial = {
+              price: financialData.price,
+              weeks: financialData.weeks,
+            };
+          }
+        }
+
+        // Set pending action if we found data
+        if (pendingProposal || pendingFinancial) {
+          setPendingAction({
+            type: pendingProposal && pendingFinancial ? 'both' : pendingProposal ? 'proposal' : 'financial',
+            proposalContent: pendingProposal,
+            financialData: pendingFinancial,
+          });
         }
       }
     } catch (error: any) {
@@ -206,6 +266,27 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
       setStorageUsage(0);
       setShowStorageWarning(false);
     }
+  };
+
+  const handleApplyChanges = () => {
+    if (!pendingAction) return;
+
+    // Apply proposal update
+    if (pendingAction.proposalContent) {
+      onProposalUpdate(pendingAction.proposalContent);
+    }
+
+    // Apply financial update
+    if (pendingAction.financialData && onFinancialUpdate) {
+      onFinancialUpdate(pendingAction.financialData.price, pendingAction.financialData.weeks);
+    }
+
+    // Clear pending action
+    setPendingAction(null);
+  };
+
+  const handleCancelChanges = () => {
+    setPendingAction(null);
   };
 
   return (
@@ -329,6 +410,47 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Confirmation Banner */}
+      {pendingAction && (
+        <div className="px-4 py-3 border-t border-yellow-300 bg-yellow-50">
+          <div className="flex items-start gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-sm font-semibold text-yellow-800">⚠️ Cambios pendientes de confirmación</span>
+              </div>
+              <div className="text-xs text-yellow-700">
+                {pendingAction.type === 'proposal' && (
+                  <span>• Vista previa de la propuesta lista para actualizar</span>
+                )}
+                {pendingAction.type === 'financial' && (
+                  <span>• Modelo financiero: ${pendingAction.financialData?.price}M, {pendingAction.financialData?.weeks} semanas</span>
+                )}
+                {pendingAction.type === 'both' && (
+                  <>
+                    <div>• Vista previa de la propuesta lista para actualizar</div>
+                    <div>• Modelo financiero: ${pendingAction.financialData?.price}M, {pendingAction.financialData?.weeks} semanas</div>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleApplyChanges}
+                className="px-3 py-1.5 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
+              >
+                ✓ Aplicar
+              </button>
+              <button
+                onClick={handleCancelChanges}
+                className="px-3 py-1.5 text-xs bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold"
+              >
+                ✕ Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Input */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">
