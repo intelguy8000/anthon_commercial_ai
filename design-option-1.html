@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lupia - Diseño 1: Modern Glassmorphism</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-panel {
+            flex: 0 0 35%;
+        }
+
+        .preview-panel {
+            flex: 0 0 40%;
+        }
+
+        .cheat-panel {
+            flex: 0 0 25%;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .panel-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .panel-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .panel-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+
+        .content-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .welcome-message h3 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-message p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .message.assistant .message-bubble {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .input-area {
+            display: flex;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .input-area textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .input-area textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 14px;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .empty-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            text-align: center;
+        }
+
+        .empty-preview-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-preview h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .empty-preview p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .export-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            margin-left: auto;
+        }
+
+        .export-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .cheat-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cheat-section h3 {
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cheat-section ul {
+            list-style: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .cheat-section li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .cheat-section li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .cheat-section.red {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .cheat-section.blue {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .cheat-section.yellow {
+            background: rgba(251, 191, 36, 0.15);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .cheat-section.green {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Chat Panel -->
+        <div class="panel chat-panel">
+            <div class="panel-header">
+                <div class="panel-icon">💬</div>
+                <div>
+                    <div class="panel-title">Chat con Lupia</div>
+                    <div class="panel-subtitle">Tu asistente comercial IA</div>
+                </div>
+            </div>
+            <div class="content-area">
+                <div class="welcome-message">
+                    <h3>¡Hola! Soy Lupia 👋</h3>
+                    <p>Estoy aquí para ayudarte con la propuesta de Estudiarte.</p>
+                    <p style="margin-top: 8px;">Pregúntame lo que necesites.</p>
+                </div>
+            </div>
+            <div class="input-area">
+                <textarea rows="2" placeholder="Escribe tu mensaje..."></textarea>
+                <button class="send-button">Enviar</button>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="panel preview-panel">
+            <div class="panel-header">
+                <div class="panel-icon">📄</div>
+                <div style="flex: 1;">
+                    <div class="panel-title">Vista Previa</div>
+                    <div class="panel-subtitle">Propuesta en Markdown</div>
+                </div>
+                <button class="export-button">📥 Exportar PDF</button>
+            </div>
+            <div class="content-area">
+                <div class="empty-preview">
+                    <div class="empty-preview-icon">📝</div>
+                    <h3>Sin contenido aún</h3>
+                    <p>La propuesta aparecerá aquí cuando<br>hables con Lupia</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cheat Sheet Panel -->
+        <div class="panel cheat-panel">
+            <div class="panel-header">
+                <div class="panel-icon">📋</div>
+                <div>
+                    <div class="panel-title">Cheat Sheet</div>
+                    <div class="panel-subtitle">Guía rápida</div>
+                </div>
+            </div>
+            <div class="content-area">
+                <div class="cheat-section red">
+                    <h3>🚨 Líneas Rojas</h3>
+                    <ul>
+                        <li><strong>Precio mínimo:</strong> $35M COP</li>
+                        <li><strong>Soporte:</strong> 2h/mes máx</li>
+                        <li><strong>NO:</strong> App móvil nativa</li>
+                        <li><strong>NO:</strong> Facturación DIAN</li>
+                    </ul>
+                </div>
+
+                <div class="cheat-section blue">
+                    <h3>📊 Números Clave</h3>
+                    <ul>
+                        <li><strong>Propuesta:</strong> $38-40M COP</li>
+                        <li><strong>ROI:</strong> +$180M/año</li>
+                        <li><strong>Ahorro:</strong> 246 horas/año</li>
+                        <li><strong>Recuperación:</strong> 2-3 meses</li>
+                    </ul>
+                </div>
+
+                <div class="cheat-section yellow">
+                    <h3>💬 Objeciones</h3>
+                    <ul>
+                        <li><strong>"Es caro"</strong><br>→ Comparar con in-house</li>
+                        <li><strong>"¿Por qué no interno?"</strong><br>→ Riesgo + costos</li>
+                        <li><strong>"Necesito tiempo"</strong><br>→ Fecha límite firme</li>
+                    </ul>
+                </div>
+
+                <div class="cheat-section green">
+                    <h3>✅ Tips de Cierre</h3>
+                    <ul>
+                        <li>Usar silencio después del precio</li>
+                        <li>Preguntar: "¿Qué necesitas?"</li>
+                        <li>Ofrecer demo en vivo</li>
+                        <li>Crear urgencia razonable</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

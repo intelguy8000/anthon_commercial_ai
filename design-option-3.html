@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lupia - Diseño 3: Clean Minimalist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            color: #18181b;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .branding {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-circle {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .brand-text h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #18181b;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text p {
+            font-size: 13px;
+            color: #71717a;
+            margin-top: 2px;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .client-badge {
+            padding: 8px 16px;
+            background: #f4f4f5;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #52525b;
+            font-weight: 500;
+        }
+
+        .client-badge strong {
+            color: #18181b;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 0.8fr;
+            gap: 24px;
+            padding: 24px 32px;
+            max-width: 1800px;
+            margin: 0 auto;
+            height: calc(100vh - 88px);
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f4f4f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-badge {
+            width: 40px;
+            height: 40px;
+            background: #fafafa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #18181b;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #a1a1aa;
+            margin-top: 2px;
+        }
+
+        .card-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .card-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .card-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .card-body::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 3px;
+        }
+
+        .welcome-box {
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .welcome-emoji {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .welcome-box h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #18181b;
+            margin-bottom: 8px;
+        }
+
+        .welcome-box p {
+            color: #71717a;
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .card-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #f4f4f5;
+            background: #fafafa;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-container textarea {
+            flex: 1;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #18181b;
+            resize: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-container textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-container textarea::placeholder {
+            color: #a1a1aa;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #52525b;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-secondary:hover {
+            background: #fafafa;
+            border-color: #d4d4d8;
+        }
+
+        .empty-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 32px;
+        }
+
+        .empty-illustration {
+            width: 120px;
+            height: 120px;
+            background: #fafafa;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .empty-visual h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #18181b;
+            margin-bottom: 6px;
+        }
+
+        .empty-visual p {
+            color: #a1a1aa;
+            font-size: 13px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .info-block {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 3px solid #e5e7eb;
+            transition: all 0.2s;
+        }
+
+        .info-block:hover {
+            background: #f4f4f5;
+        }
+
+        .info-block.red { border-left-color: #ef4444; }
+        .info-block.blue { border-left-color: #3b82f6; }
+        .info-block.yellow { border-left-color: #f59e0b; }
+        .info-block.purple { border-left-color: #8b5cf6; }
+
+        .info-block h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #18181b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-block ul {
+            list-style: none;
+        }
+
+        .info-block li {
+            font-size: 13px;
+            color: #52525b;
+            margin-bottom: 8px;
+            line-height: 1.6;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .info-block li:before {
+            content: "•";
+            position: absolute;
+            left: 4px;
+            color: #a1a1aa;
+        }
+
+        .info-block strong {
+            color: #18181b;
+            font-weight: 600;
+        }
+
+        .info-block .arrow {
+            color: #71717a;
+            font-weight: normal;
+        }
+
+        .divider-line {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 10px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #f4f4f5;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #52525b;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="branding">
+            <div class="logo-circle">✨</div>
+            <div class="brand-text">
+                <h1>Lupia</h1>
+                <p>Asistente Comercial Inteligente</p>
+            </div>
+        </div>
+        <div class="header-info">
+            <div class="client-badge">
+                <strong>Cliente:</strong> Estudiarte
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace">
+        <!-- Chat Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <div class="icon-badge">💬</div>
+                    <div>
+                        <div class="card-title">Chat con Lupia</div>
+                        <div class="card-subtitle">Tu asistente IA</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="welcome-box">
+                    <div class="welcome-emoji">👋</div>
+                    <h3>¡Hola! Soy Lupia</h3>
+                    <p>Estoy aquí para ayudarte con la propuesta de Estudiarte. Pregúntame lo que necesites.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="input-container">
+                    <textarea rows="2" placeholder="Escribe tu mensaje..."></textarea>
+                    <button class="btn-primary">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <div class="icon-badge">📄</div>
+                    <div>
+                        <div class="card-title">Vista Previa</div>
+                        <div class="card-subtitle">Propuesta en Markdown</div>
+                    </div>
+                </div>
+                <button class="btn-secondary">
+                    <span>📥</span>
+                    <span>Exportar PDF</span>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="empty-visual">
+                    <div class="empty-illustration">📝</div>
+                    <h3>Sin contenido aún</h3>
+                    <p>La propuesta aparecerá aquí cuando hables con Lupia</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cheat Sheet Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <div class="icon-badge">📋</div>
+                    <div>
+                        <div class="card-title">Cheat Sheet</div>
+                        <div class="card-subtitle">Guía rápida</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="info-block red">
+                    <h4>🚨 Líneas Rojas</h4>
+                    <ul>
+                        <li><strong>Precio mínimo:</strong> $35M COP</li>
+                        <li><strong>Soporte máximo:</strong> 2h/mes</li>
+                        <li><strong>NO prometer:</strong> App móvil</li>
+                        <li><strong>NO incluir:</strong> DIAN completa</li>
+                    </ul>
+                </div>
+
+                <div class="info-block blue">
+                    <h4>📊 Números Clave</h4>
+                    <ul>
+                        <li><strong>Propuesta:</strong> $38-40M COP</li>
+                        <li><strong>ROI esperado:</strong> +$180M/año</li>
+                        <li><strong>Ahorro tiempo:</strong> 246 horas/año</li>
+                        <li><strong>Recuperación:</strong> 2-3 meses</li>
+                        <li><strong>vs In-house:</strong> $114M vs $360M (3 años)</li>
+                    </ul>
+                </div>
+
+                <div class="info-block yellow">
+                    <h4>💬 Objeciones Comunes</h4>
+                    <ul>
+                        <li><strong>"Es muy caro"</strong></li>
+                        <li class="arrow">→ Comparar con in-house $360M</li>
+                        <div class="divider-line"></div>
+                        <li><strong>"¿Por qué no interno?"</strong></li>
+                        <li class="arrow">→ Riesgo, costos ocultos</li>
+                        <div class="divider-line"></div>
+                        <li><strong>"Necesitamos tiempo"</strong></li>
+                        <li class="arrow">→ Fecha límite razonable</li>
+                    </ul>
+                </div>
+
+                <div class="info-block purple">
+                    <h4>✅ Tips de Cierre</h4>
+                    <ul>
+                        <li>Usar silencio después del precio</li>
+                        <li>"¿Qué necesitas para decidir?"</li>
+                        <li>Ofrecer demo con su data</li>
+                        <li>Crear urgencia: "Empezamos ya"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
