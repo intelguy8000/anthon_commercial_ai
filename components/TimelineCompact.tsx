@@ -24,6 +24,31 @@ export default function TimelineCompact({ weeksTotal = 8 }: TimelineCompactProps
 
   const totalWeeksWithSupport = adjustedPhases.reduce((sum, p) => sum + p.adjustedWeeks, 0);
 
+  // Calculate date ranges for each phase (assuming start is today)
+  const getDateRange = (phaseIndex: number) => {
+    const startDate = new Date();
+    let weeksOffset = 0;
+
+    // Calculate weeks offset for this phase
+    for (let i = 0; i < phaseIndex; i++) {
+      weeksOffset += adjustedPhases[i].adjustedWeeks;
+    }
+
+    const phaseStart = new Date(startDate);
+    phaseStart.setDate(phaseStart.getDate() + (weeksOffset * 7));
+
+    const phaseEnd = new Date(phaseStart);
+    phaseEnd.setDate(phaseEnd.getDate() + (adjustedPhases[phaseIndex].adjustedWeeks * 7) - 1);
+
+    const formatDate = (date: Date) => {
+      const day = date.getDate();
+      const month = date.toLocaleString('es', { month: 'short' });
+      return `${day} ${month}`;
+    };
+
+    return `${formatDate(phaseStart)} - ${formatDate(phaseEnd)}`;
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-4">
@@ -54,7 +79,7 @@ export default function TimelineCompact({ weeksTotal = 8 }: TimelineCompactProps
               {/* Label */}
               <div className="mt-2 text-center">
                 <div className="text-xs font-semibold text-gray-700 whitespace-nowrap">{phase.name}</div>
-                <div className="text-xs text-gray-500">{phase.adjustedWeeks}sem</div>
+                <div className="text-xs text-purple-600 font-medium">{getDateRange(index)}</div>
               </div>
 
               {/* Tooltip en hover */}
