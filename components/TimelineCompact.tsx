@@ -10,7 +10,8 @@ export default function TimelineCompact({ weeksTotal = 8 }: TimelineCompactProps
     { name: 'Desarrollo Core', weeks: 3, color: 'bg-purple-500', icon: '⚙️' },
     { name: 'Features', weeks: 2, color: 'bg-purple-600', icon: '✨' },
     { name: 'Testing', weeks: 1, color: 'bg-purple-700', icon: '🧪' },
-    { name: 'Lanzamiento', weeks: 1, color: 'bg-purple-900', icon: '🎉' }
+    { name: 'Lanzamiento', weeks: 1, color: 'bg-purple-900', icon: '🎉' },
+    { name: 'Soporte', weeks: 2, color: 'bg-purple-400', icon: '🛠️' }
   ];
 
   const adjustedPhases = phases.map((phase, index) => {
@@ -21,15 +22,17 @@ export default function TimelineCompact({ weeksTotal = 8 }: TimelineCompactProps
     };
   });
 
+  const totalWeeksWithSupport = adjustedPhases.reduce((sum, p) => sum + p.adjustedWeeks, 0);
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-700">🗓️ Timeline: {weeksTotal} semanas</h3>
+        <h3 className="text-sm font-semibold text-gray-700">Timeline</h3>
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <span>Semana 1</span>
           <span>→</span>
-          <span>Semana {weeksTotal}</span>
-          <span className="ml-2 text-purple-600 font-medium">(+2 sem soporte)</span>
+          <span>Semana {totalWeeksWithSupport}</span>
+          <span className="ml-2 text-gray-400">({weeksTotal} desarrollo + 2 soporte)</span>
         </div>
       </div>
 
