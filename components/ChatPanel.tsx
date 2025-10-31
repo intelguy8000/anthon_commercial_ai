@@ -216,23 +216,41 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
         let pendingFinancial: { price: number; weeks: number } | undefined;
 
         const assistantMessage = lastAssistantMessageRef.current;
+        console.log('🔍 Procesando hashtags:', { hasProposal, hasFinancial, messageLength: assistantMessage.length });
 
         // Extract proposal from assistant message
         if (hasProposal) {
-          // Try to match complete markdown block first
+          // Strategy 1: Try to match complete markdown block first (with closing ```)
           let markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*?)```/);
 
-          // If not found or incomplete, try to match unclosed block (in case generation was stopped)
+          // Strategy 2: If not found, try to match unclosed block (generation stopped)
           if (!markdownMatch) {
             markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*)/);
           }
 
-          if (markdownMatch && markdownMatch[1].trim()) {
-            const proposalContent = markdownMatch[1].trim();
+          // Strategy 3: If still nothing, try without language tag
+          if (!markdownMatch) {
+            markdownMatch = assistantMessage.match(/```\s*\n([\s\S]*?)```/);
+          }
+
+          // Strategy 4: Last resort - try unclosed block without language tag
+          if (!markdownMatch) {
+            markdownMatch = assistantMessage.match(/```\s*\n([\s\S]*)/);
+          }
+
+          if (markdownMatch && markdownMatch[1]) {
+            let proposalContent = markdownMatch[1].trim();
+
+            // Clean up any trailing ``` that might be in the middle
+            proposalContent = proposalContent.replace(/```\s*$/, '').trim();
+
             // Only consider it a proposal if it has headers
             if (proposalContent.includes('# ') || proposalContent.includes('## ')) {
               pendingProposal = proposalContent;
+              console.log('📄 Propuesta extraída:', proposalContent.length, 'caracteres');
             }
+          } else {
+            console.warn('⚠️ No se pudo extraer markdown del mensaje');
           }
         }
 

@@ -70,6 +70,11 @@ export default function PreviewPanel({ content, isExpanded = false, onToggleExpa
       <div className="px-4 py-2 border-b border-gray-200 bg-white flex justify-between items-center flex-shrink-0">
         <h2 className="text-sm font-semibold text-gray-700">📄 Vista Previa</h2>
         <div className="flex gap-2">
+          {content && (
+            <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded">
+              {content.length} chars
+            </span>
+          )}
           {onToggleExpand && (
             <button
               onClick={onToggleExpand}
