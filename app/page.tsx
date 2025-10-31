@@ -8,7 +8,7 @@ import TimelineCompact from '@/components/TimelineCompact';
 
 export default function Home() {
   const [proposalContent, setProposalContent] = useState('');
-  const [expandedPanel, setExpandedPanel] = useState<'preview' | 'financial' | null>(null);
+  const [expandedPanel, setExpandedPanel] = useState<'preview' | 'financial' | 'chat' | null>(null);
 
   // Estado reactivo que se actualiza desde el chat
   const [projectCost, setProjectCost] = useState(38);
@@ -43,7 +43,11 @@ export default function Home() {
         <div className="h-full grid grid-cols-[1fr,1fr,1fr] gap-4">
           {/* Column 1: Chat con LoopIA */}
           <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <ChatPanel onProposalUpdate={setProposalContent} />
+            <ChatPanel
+              onProposalUpdate={setProposalContent}
+              isExpanded={expandedPanel === 'chat'}
+              onToggleExpand={() => setExpandedPanel(expandedPanel === 'chat' ? null : 'chat')}
+            />
           </div>
 
           {/* Column 2: Modelo Financiero */}
@@ -76,7 +80,13 @@ export default function Home() {
       {expandedPanel && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-8">
           <div className="bg-white rounded-2xl w-full h-full max-w-7xl shadow-2xl overflow-hidden">
-            {expandedPanel === 'financial' ? (
+            {expandedPanel === 'chat' ? (
+              <ChatPanel
+                onProposalUpdate={setProposalContent}
+                isExpanded={true}
+                onToggleExpand={() => setExpandedPanel(null)}
+              />
+            ) : expandedPanel === 'financial' ? (
               <ProjectCashFlow
                 projectCost={projectCost}
                 weeksTimeline={weeksTimeline}

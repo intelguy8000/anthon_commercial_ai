@@ -9,13 +9,15 @@ interface Message {
 
 interface ChatPanelProps {
   onProposalUpdate: (content: string) => void;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 const STORAGE_KEY = 'loopia-chat-history';
 const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const WARNING_THRESHOLD = 0.8; // 80% of max storage
 
-export default function ChatPanel({ onProposalUpdate }: ChatPanelProps) {
+export default function ChatPanel({ onProposalUpdate, isExpanded = false, onToggleExpand }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -181,8 +183,8 @@ export default function ChatPanel({ onProposalUpdate }: ChatPanelProps) {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* Header - Simplified */}
-      <div className="px-4 py-2 border-b border-gray-200 bg-white">
+      {/* Header */}
+      <div className="px-4 py-2 border-b border-gray-200 bg-gray-50">
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-semibold text-gray-700">💬 Chat con Loop<span className="text-purple-600">IA</span></h2>
           <div className="flex items-center gap-2">
@@ -207,6 +209,16 @@ export default function ChatPanel({ onProposalUpdate }: ChatPanelProps) {
                 title="Limpiar historial"
               >
                 🗑️
+              </button>
+            )}
+            {/* Expand button */}
+            {onToggleExpand && (
+              <button
+                onClick={onToggleExpand}
+                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-xs"
+                title={isExpanded ? "Cerrar" : "Expandir"}
+              >
+                {isExpanded ? '✕' : '⛶'}
               </button>
             )}
           </div>
@@ -256,21 +268,21 @@ export default function ChatPanel({ onProposalUpdate }: ChatPanelProps) {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50">
-        <div className="flex space-x-2">
+      <div className="p-3 border-t border-gray-200 bg-gray-50">
+        <div className="flex gap-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Escribe tu mensaje..."
-            className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-            rows={2}
+            className="flex-1 p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            rows={1}
             disabled={isLoading}
           />
           <button
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+            className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
           >
             Enviar
           </button>
