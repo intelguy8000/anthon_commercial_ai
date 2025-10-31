@@ -115,9 +115,10 @@ export async function POST(req: NextRequest) {
     const { messages } = await req.json();
 
     if (!process.env.ANTHROPIC_API_KEY) {
+      console.error('ANTHROPIC_API_KEY is not configured');
       return new Response(
         JSON.stringify({ error: 'ANTHROPIC_API_KEY no configurada' }),
-        { status: 500 }
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
@@ -168,11 +169,17 @@ export async function POST(req: NextRequest) {
         'Connection': 'keep-alive',
       },
     });
-  } catch (error) {
-    console.error('Error:', error);
+  } catch (error: any) {
+    console.error('Error in chat API:', error);
     return new Response(
-      JSON.stringify({ error: 'Error interno del servidor' }),
-      { status: 500 }
+      JSON.stringify({
+        error: 'Error interno del servidor',
+        message: error?.message || 'Unknown error'
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }
