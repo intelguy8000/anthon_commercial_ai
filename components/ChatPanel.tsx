@@ -37,6 +37,7 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
   const [abortController, setAbortController] = useState<AbortController | null>(null);
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastAssistantMessageRef = useRef<string>('');
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -165,6 +166,7 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
 
                 if (parsed.content) {
                   assistantMessage += parsed.content;
+                  lastAssistantMessageRef.current = assistantMessage; // Keep track for hashtag processing
                   setMessages((prev) => {
                     const newMessages = [...prev];
                     const lastMessage = newMessages[newMessages.length - 1];
@@ -184,19 +186,50 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
         }
       }
 
-      // After streaming completes, process hashtags
-      if (userHashtags.length > 0) {
+    } catch (error: any) {
+      console.error('Error:', error);
+      if (error.name === 'AbortError') {
+        setMessages((prev) => [...prev, {
+          role: 'assistant',
+          content: '⏹ Generación detenida por el usuario.'
+        }]);
+      } else {
+        setMessages((prev) => [...prev, {
+          role: 'assistant',
+          content: 'Lo siento, hubo un error. Por favor intenta de nuevo.'
+        }]);
+      }
+    } finally {
+      setIsLoading(false);
+      setAbortController(null);
+      // Reset Opus to false after using (one-time use)
+      if (useOpus) {
+        setUseOpus(false);
+      }
+
+      // Process hashtags after streaming completes (or is aborted)
+      if (userHashtags.length > 0 && lastAssistantMessageRef.current) {
         const hasProposal = userHashtags.some(tag => tag.toLowerCase() === '#lapropuesta' || tag.toLowerCase() === '#todo');
         const hasFinancial = userHashtags.some(tag => tag.toLowerCase() === '#modelofinanciero' || tag.toLowerCase() === '#todo');
 
         let pendingProposal: string | undefined;
         let pendingFinancial: { price: number; weeks: number } | undefined;
 
+        const assistantMessage = lastAssistantMessageRef.current;
+
         // Extract proposal from assistant message
         if (hasProposal) {
-          const markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*?)```/);
+          // Try to match complete markdown block first
+          let markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*?)```/);
+
+          // If not found or incomplete, try to match unclosed block (in case generation was stopped)
+          if (!markdownMatch) {
+            markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*)/);
+          }
+
           if (markdownMatch && markdownMatch[1].trim()) {
             const proposalContent = markdownMatch[1].trim();
+            // Only consider it a proposal if it has headers
             if (proposalContent.includes('# ') || proposalContent.includes('## ')) {
               pendingProposal = proposalContent;
             }
@@ -222,26 +255,9 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
             financialData: pendingFinancial,
           });
         }
-      }
-    } catch (error: any) {
-      console.error('Error:', error);
-      if (error.name === 'AbortError') {
-        setMessages((prev) => [...prev, {
-          role: 'assistant',
-          content: '⏹ Generación detenida por el usuario.'
-        }]);
-      } else {
-        setMessages((prev) => [...prev, {
-          role: 'assistant',
-          content: 'Lo siento, hubo un error. Por favor intenta de nuevo.'
-        }]);
-      }
-    } finally {
-      setIsLoading(false);
-      setAbortController(null);
-      // Reset Opus to false after using (one-time use)
-      if (useOpus) {
-        setUseOpus(false);
+
+        // Clear the ref
+        lastAssistantMessageRef.current = '';
       }
     }
   };
