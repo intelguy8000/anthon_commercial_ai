@@ -6,11 +6,11 @@ interface TimelineCompactProps {
 
 export default function TimelineCompact({ weeksTotal = 8 }: TimelineCompactProps) {
   const phases = [
-    { name: 'Kick-off', weeks: 1, color: 'bg-blue-500', icon: '🚀' },
+    { name: 'Kick-off', weeks: 1, color: 'bg-purple-300', icon: '🚀' },
     { name: 'Desarrollo Core', weeks: 3, color: 'bg-purple-500', icon: '⚙️' },
-    { name: 'Features', weeks: 2, color: 'bg-green-500', icon: '✨' },
-    { name: 'Testing', weeks: 1, color: 'bg-orange-500', icon: '🧪' },
-    { name: 'Lanzamiento', weeks: 1, color: 'bg-red-500', icon: '🎉' }
+    { name: 'Features', weeks: 2, color: 'bg-purple-600', icon: '✨' },
+    { name: 'Testing', weeks: 1, color: 'bg-purple-700', icon: '🧪' },
+    { name: 'Lanzamiento', weeks: 1, color: 'bg-purple-900', icon: '🎉' }
   ];
 
   const adjustedPhases = phases.map((phase, index) => {
@@ -72,23 +72,23 @@ export default function TimelineCompact({ weeksTotal = 8 }: TimelineCompactProps
 
         {/* Indicador de progreso */}
         <div className="mt-4 bg-gray-100 rounded-full h-2 overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 h-full w-0
+          <div className="bg-gradient-to-r from-purple-300 via-purple-500 to-purple-900 h-full w-0
             transition-all duration-1000 ease-out" style={{ width: '0%' }}></div>
         </div>
 
         {/* Info adicional */}
         <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
-          <div className="bg-blue-50 rounded-lg p-2 text-center border border-blue-200">
-            <div className="font-semibold text-blue-700">Inicio</div>
-            <div className="text-blue-600">Semana 1</div>
+          <div className="bg-purple-50 rounded-lg p-2 text-center border border-purple-200">
+            <div className="font-semibold text-purple-700">Inicio</div>
+            <div className="text-purple-600">Semana 1</div>
+          </div>
+          <div className="bg-purple-100 rounded-lg p-2 text-center border border-purple-300">
+            <div className="font-semibold text-purple-800">Entrega</div>
+            <div className="text-purple-700">Semana {weeksTotal}</div>
           </div>
           <div className="bg-purple-50 rounded-lg p-2 text-center border border-purple-200">
-            <div className="font-semibold text-purple-700">Entrega</div>
-            <div className="text-purple-600">Semana {weeksTotal}</div>
-          </div>
-          <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
-            <div className="font-semibold text-green-700">Soporte</div>
-            <div className="text-green-600">+2 semanas</div>
+            <div className="font-semibold text-purple-700">Soporte</div>
+            <div className="text-purple-600">+2 semanas</div>
           </div>
         </div>
       </div>
