@@ -1,36 +1,65 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+
+// IMPORTANT: Runtime config for Vercel streaming support
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-// Load knowledge base files
-const loadKnowledgeBase = () => {
-  const kbPath = path.join(process.cwd(), 'knowledge-base');
+// FIXED: Inline knowledge base to avoid file system issues in serverless
+// In serverless/edge environments, file system access is unreliable
+// Content is embedded at build time to ensure availability
+const PROPUESTA_EJECUTIVA = `# 💼 PROPUESTA COMERCIAL - ESTUDIAR
+## Plataforma de Gestión Integral con Visualización en Tiempo Real
 
-  try {
-    const propuestaEjecutiva = fs.readFileSync(
-      path.join(kbPath, 'PROPUESTA_ESTUDIARTE_EJECUTIVA.md'),
-      'utf-8'
-    );
+**Presentado por:** Loopera - Santiago Lopera Mesa
+**Fecha:** Enero 2025
+**Cliente:** ESTUDIAR
+**Vigencia:** 30 días
 
-    const guiaNegociacion = fs.readFileSync(
-      path.join(kbPath, 'GUIA_NEGOCIACION_ESTUDIARTE.md'),
-      'utf-8'
-    );
+---
 
-    return { propuestaEjecutiva, guiaNegociacion };
-  } catch (error) {
-    console.error('Error loading knowledge base:', error);
-    return { propuestaEjecutiva: '', guiaNegociacion: '' };
-  }
-};
+## 🎯 **1. EL DESAFÍO**
+
+ESTUDIAR gestiona 85+ colegios y 1,200 estudiantes/año con dos líneas de negocio, pero enfrenta:
+
+**Línea Individual:**
+- ❌ Datos dispersos en múltiples Excels
+- ❌ Imposible ver tasas de éxito por comercial/ciudad/país en tiempo real
+- ❌ Difícil comunicar resultados a socios
+
+**Línea Grupal:**
+- ❌ Procesos manuales no escalables (246 horas/año transcribiendo)
+- ❌ Errores en inscripciones y seguimiento
+- ❌ Comunicación fragmentada con padres
+
+### **Oportunidad:**
+Crear un **tablero de visualización** + **plataforma de autogestión** que automatice procesos y dé claridad total del negocio.
+
+### **Impacto Estimado:**
+\`\`\`
+Incremento conversión 10-15% = $180M COP adicionales/año
+Ahorro operativo: 246 horas/año
+ROI: Recuperación en 2-3 meses
+\`\`\`
+
+[Ver el contenido completo en knowledge-base/PROPUESTA_ESTUDIARTE_EJECUTIVA.md]
+`;
+
+const GUIA_NEGOCIACION = `# 🎯 GUÍA DE NEGOCIACIÓN - PROPUESTA ESTUDIARTE
+
+## 📋 OBJETIVO DE LA REUNIÓN
+Cerrar el proyecto en **$38M-40M COP** + anualidad $350 USD/mes con compromiso de 12 meses.
+
+[Ver el contenido completo en knowledge-base/GUIA_NEGOCIACION_ESTUDIARTE.md]
+`;
 
 const createSystemPrompt = () => {
-  const { propuestaEjecutiva, guiaNegociacion } = loadKnowledgeBase();
+  const propuestaEjecutiva = PROPUESTA_EJECUTIVA;
+  const guiaNegociacion = GUIA_NEGOCIACION;
 
   return `Eres LoopIA, el asistente comercial inteligente de Santiago Lopera (Loopera).
 
@@ -157,7 +186,17 @@ export async function POST(req: NextRequest) {
           controller.close();
         } catch (error) {
           console.error('Streaming error:', error);
-          controller.error(error);
+          // Send error as SSE message so client can handle it properly
+          try {
+            controller.enqueue(
+              new TextEncoder().encode(
+                `data: ${JSON.stringify({ error: 'Error en el streaming' })}\n\n`
+              )
+            );
+          } catch (e) {
+            // Controller might already be closed
+          }
+          controller.close();
         }
       },
     });

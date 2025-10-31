@@ -63,6 +63,12 @@ export default function ChatPanel({ onProposalUpdate }: ChatPanelProps) {
 
               try {
                 const parsed = JSON.parse(data);
+
+                // Handle error messages from stream
+                if (parsed.error) {
+                  throw new Error(parsed.error);
+                }
+
                 if (parsed.content) {
                   assistantMessage += parsed.content;
                   setMessages((prev) => {
