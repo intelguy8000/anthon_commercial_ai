@@ -1304,10 +1304,19 @@ ${guiaNegociacion}
 - Proporciona scripts exactos que Santiago puede usar
 - Explica el "por qué" brevemente
 
-**Para ajustes de propuesta:**
-- Genera el contenido completo en formato Markdown dentro de un bloque \`\`\`markdown
-- Asegúrate de que sea profesional y bien estructurado
-- Incluye todos los elementos visuales necesarios (emojis para secciones, tablas, listas)
+**Para generar/mostrar propuestas en el preview:**
+Cuando Santiago pida "muéstrame la propuesta", "genera propuesta", o "actualiza el preview":
+1. Responde brevemente confirmando que generarás la propuesta
+2. Genera el contenido completo en un bloque de código markdown así:
+
+\`\`\`markdown
+# 💼 PROPUESTA COMERCIAL - ESTUDIARTE
+[...contenido completo de la propuesta aquí...]
+\`\`\`
+
+3. El sistema automáticamente detectará el bloque ```markdown y lo mostrará en el panel de Vista Previa
+4. Asegúrate de que sea profesional y bien estructurado
+5. Incluye todos los elementos visuales (emojis, tablas, listas)
 
 **Para cálculos:**
 - Muestra matemática clara

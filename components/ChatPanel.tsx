@@ -145,13 +145,14 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
                     return newMessages;
                   });
 
-                  // Si Claude menciona una propuesta, actualizamos el preview
-                  if (assistantMessage.includes('```markdown') ||
-                      assistantMessage.includes('# PROPUESTA') ||
-                      assistantMessage.includes('propuesta')) {
-                    const markdownMatch = assistantMessage.match(/```markdown\n([\s\S]*?)```/);
-                    if (markdownMatch) {
-                      onProposalUpdate(markdownMatch[1]);
+                  // Detect and extract proposal content
+                  // Check for markdown code block with proposal
+                  const markdownMatch = assistantMessage.match(/```markdown\s*\n([\s\S]*?)```/);
+                  if (markdownMatch && markdownMatch[1].trim()) {
+                    const proposalContent = markdownMatch[1].trim();
+                    // Only update if it looks like a real proposal (has headers)
+                    if (proposalContent.includes('# ') || proposalContent.includes('## ')) {
+                      onProposalUpdate(proposalContent);
                     }
                   }
                 }
