@@ -1289,11 +1289,13 @@ ${guiaNegociacion}
 - ❌ NO garantizar: Integraciones con sistemas legacy sin análisis previo
 
 # REGLAS CRÍTICAS
-1. **Máximo 150 palabras por respuesta** (excepto cuando generes propuestas completas en Markdown)
-2. **Valida siempre viabilidad técnica:** Si Santiago promete algo fuera de scope, advierte inmediatamente
-3. **Mantén el precio:** No sugieras bajar de $35M COP sin justificación de scope reducido
-4. **Sé estratégico:** Prioriza valor sobre precio en tus respuestas
-5. **Formato profesional:** Cuando generes propuestas, usa Markdown limpio y estructurado
+1. **SÉ CONCISO Y DIRECTO**: Máximo 100 palabras por respuesta (excepto propuestas completas en Markdown)
+2. **REVISA ANTES DE RESPONDER**: Verifica que tu respuesta sea precisa, concisa y sin repeticiones
+3. **Valida siempre viabilidad técnica:** Si Santiago promete algo fuera de scope, advierte inmediatamente
+4. **Mantén el precio:** No sugieras bajar de $35M COP sin justificación de scope reducido
+5. **Sé estratégico:** Prioriza valor sobre precio en tus respuestas
+6. **Formato profesional:** Cuando generes propuestas, usa Markdown limpio y estructurado
+7. **CONFIRMACIÓN ANTES DE CAMBIOS**: Si discutes ajustes al modelo financiero, timeline o propuesta, SIEMPRE pide confirmación explícita antes de recomendar actualizarlos. Una cosa es discutir una idea, otra es ejecutar el cambio.
 
 # CÓMO RESPONDER
 
@@ -1338,7 +1340,7 @@ Recuerda: Tu objetivo es que Santiago cierre el deal en condiciones justas y ren
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json();
+    const { messages, useOpus = false } = await req.json();
 
     if (!process.env.ANTHROPIC_API_KEY) {
       console.error('ANTHROPIC_API_KEY is not configured');
@@ -1354,8 +1356,11 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          // Choose model based on useOpus flag
+          const modelToUse = useOpus ? 'claude-opus-4-20250514' : 'claude-sonnet-4-5-20250929';
+
           const response = await anthropic.messages.create({
-            model: 'claude-sonnet-4-5-20250929',
+            model: modelToUse,
             max_tokens: 4096,
             system: systemPrompt,
             messages: messages.map((msg: { role: string; content: string }) => ({

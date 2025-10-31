@@ -23,6 +23,8 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
   const [isLoading, setIsLoading] = useState(false);
   const [storageUsage, setStorageUsage] = useState(0);
   const [showStorageWarning, setShowStorageWarning] = useState(false);
+  const [useOpus, setUseOpus] = useState(false);
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -88,13 +90,19 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
     setInput('');
     setIsLoading(true);
 
+    // Create abort controller for this request
+    const controller = new AbortController();
+    setAbortController(controller);
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage]
+          messages: [...messages, userMessage],
+          useOpus: useOpus, // Send flag to use Opus if activated
         }),
+        signal: controller.signal,
       });
 
       if (!response.ok) throw new Error('Error en la respuesta');
@@ -154,14 +162,32 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
-      setMessages((prev) => [...prev, {
-        role: 'assistant',
-        content: 'Lo siento, hubo un error. Por favor intenta de nuevo.'
-      }]);
+      if (error.name === 'AbortError') {
+        setMessages((prev) => [...prev, {
+          role: 'assistant',
+          content: '⏹ Generación detenida por el usuario.'
+        }]);
+      } else {
+        setMessages((prev) => [...prev, {
+          role: 'assistant',
+          content: 'Lo siento, hubo un error. Por favor intenta de nuevo.'
+        }]);
+      }
     } finally {
       setIsLoading(false);
+      setAbortController(null);
+      // Reset Opus to false after using (one-time use)
+      if (useOpus) {
+        setUseOpus(false);
+      }
+    }
+  };
+
+  const handleStop = () => {
+    if (abortController) {
+      abortController.abort();
     }
   };
 
@@ -186,7 +212,19 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
       {/* Header */}
       <div className="px-4 py-2 border-b border-gray-200 bg-gray-50">
         <div className="flex justify-between items-center">
-          <h2 className="text-sm font-semibold text-gray-700">💬 Chat con Loop<span className="text-purple-600">IA</span></h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-gray-700">💬 Chat con Loop<span className="text-purple-600">IA</span></h2>
+            {/* Model indicator */}
+            {isLoading && (
+              <span className={`text-xs px-2 py-0.5 rounded ${
+                useOpus
+                  ? 'bg-purple-100 text-purple-700 border border-purple-300 font-semibold'
+                  : 'bg-blue-100 text-blue-700'
+              }`}>
+                {useOpus ? '🧠 Opus 4' : '⚡ Sonnet 4.5'}
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             {/* Storage indicator */}
             {storageUsage > 0 && (
@@ -209,6 +247,30 @@ export default function ChatPanel({ onProposalUpdate, isExpanded = false, onTogg
                 title="Limpiar historial"
               >
                 🗑️
+              </button>
+            )}
+            {/* Stop button - only during loading */}
+            {isLoading && (
+              <button
+                onClick={handleStop}
+                className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-semibold border border-red-300"
+                title="Detener generación"
+              >
+                ⏹ Stop
+              </button>
+            )}
+            {/* LoopAI Pro button - one-time Opus trigger */}
+            {!isLoading && (
+              <button
+                onClick={() => setUseOpus(!useOpus)}
+                className={`px-3 py-1 text-xs rounded-lg font-semibold transition-colors ${
+                  useOpus
+                    ? 'bg-purple-600 text-white border-2 border-purple-700 hover:bg-purple-700'
+                    : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300'
+                }`}
+                title={useOpus ? "Siguiente mensaje usará Opus 4.1" : "Activar LoopAI Pro (Opus 4.1)"}
+              >
+                🧠 {useOpus ? 'Pro ACTIVADO' : 'LoopAI Pro'}
               </button>
             )}
             {/* Expand button */}
