@@ -7,9 +7,11 @@ import html2canvas from 'html2canvas';
 
 interface PreviewPanelProps {
   content: string;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
-export default function PreviewPanel({ content }: PreviewPanelProps) {
+export default function PreviewPanel({ content, isExpanded = false, onToggleExpand }: PreviewPanelProps) {
   const previewRef = useRef<HTMLDivElement>(null);
 
   const handleExportPDF = async () => {
@@ -45,12 +47,23 @@ export default function PreviewPanel({ content }: PreviewPanelProps) {
       {/* Header */}
       <div className="px-4 py-2 border-b border-gray-200 bg-white flex justify-between items-center">
         <h2 className="text-sm font-semibold text-gray-700">📄 Vista Previa</h2>
-        <button
-          onClick={handleExportPDF}
-          className="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-xs"
-        >
-          📥 PDF
-        </button>
+        <div className="flex gap-2">
+          {onToggleExpand && (
+            <button
+              onClick={onToggleExpand}
+              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-xs"
+              title={isExpanded ? "Cerrar" : "Expandir"}
+            >
+              {isExpanded ? '✕' : '⛶'}
+            </button>
+          )}
+          <button
+            onClick={handleExportPDF}
+            className="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-xs"
+          >
+            📥 PDF
+          </button>
+        </div>
       </div>
 
       {/* Preview Content */}

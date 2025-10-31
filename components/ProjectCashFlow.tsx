@@ -5,9 +5,11 @@ import { useState, useEffect } from 'react';
 interface CashFlowProps {
   projectCost: number;
   weeksTimeline: number;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
-export default function ProjectCashFlow({ projectCost = 38, weeksTimeline = 8 }: CashFlowProps) {
+export default function ProjectCashFlow({ projectCost = 38, weeksTimeline = 8, isExpanded = false, onToggleExpand }: CashFlowProps) {
   // Estructura de pagos del cliente
   const payment1 = projectCost * 0.5; // 50% al firmar
   const payment2 = projectCost * 0.3; // 30% semana 4
@@ -104,8 +106,17 @@ export default function ProjectCashFlow({ projectCost = 38, weeksTimeline = 8 }:
   return (
     <div className="h-full flex flex-col bg-white rounded-2xl border border-gray-200 overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-2 border-b border-gray-200 bg-gray-50">
+      <div className="px-4 py-2 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
         <h3 className="text-sm font-semibold text-gray-700">📊 Modelo Financiero</h3>
+        {onToggleExpand && (
+          <button
+            onClick={onToggleExpand}
+            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-xs"
+            title={isExpanded ? "Cerrar" : "Expandir"}
+          >
+            {isExpanded ? '✕' : '⛶'}
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">

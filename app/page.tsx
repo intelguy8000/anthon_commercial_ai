@@ -5,11 +5,10 @@ import ChatPanel from '@/components/ChatPanel';
 import PreviewPanel from '@/components/PreviewPanel';
 import ProjectCashFlow from '@/components/ProjectCashFlow';
 import TimelineCompact from '@/components/TimelineCompact';
-import CheatSheetTabs from '@/components/CheatSheetTabs';
 
 export default function Home() {
   const [proposalContent, setProposalContent] = useState('');
-  const [cheatSheetOpen, setCheatSheetOpen] = useState(false);
+  const [expandedPanel, setExpandedPanel] = useState<'preview' | 'financial' | null>(null);
 
   // Estado reactivo que se actualiza desde el chat
   const [projectCost, setProjectCost] = useState(38);
@@ -42,19 +41,28 @@ export default function Home() {
       {/* Main Content - 3 Columns */}
       <div className="flex-1 overflow-hidden p-4">
         <div className="h-full grid grid-cols-[1fr,1fr,1fr] gap-4">
-          {/* Column 1: Chat con Lupia */}
+          {/* Column 1: Chat con LoopIA */}
           <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
             <ChatPanel onProposalUpdate={setProposalContent} />
           </div>
 
           {/* Column 2: Modelo Financiero */}
           <div className="overflow-hidden">
-            <ProjectCashFlow projectCost={projectCost} weeksTimeline={weeksTimeline} />
+            <ProjectCashFlow
+              projectCost={projectCost}
+              weeksTimeline={weeksTimeline}
+              isExpanded={expandedPanel === 'financial'}
+              onToggleExpand={() => setExpandedPanel(expandedPanel === 'financial' ? null : 'financial')}
+            />
           </div>
 
           {/* Column 3: Vista Previa */}
           <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <PreviewPanel content={proposalContent} />
+            <PreviewPanel
+              content={proposalContent}
+              isExpanded={expandedPanel === 'preview'}
+              onToggleExpand={() => setExpandedPanel(expandedPanel === 'preview' ? null : 'preview')}
+            />
           </div>
         </div>
       </div>
@@ -64,47 +72,27 @@ export default function Home() {
         <TimelineCompact weeksTotal={weeksTimeline} />
       </div>
 
-      {/* CheatSheet - Collapsible at bottom */}
-      <div className="flex-shrink-0 border-t border-gray-200 bg-white">
-        <button
-          onClick={() => setCheatSheetOpen(!cheatSheetOpen)}
-          className="w-full py-3 px-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-lg">📋</span>
-            <span className="text-sm font-semibold text-gray-700">Cheat Sheet</span>
-            <span className="text-xs text-gray-500">Líneas rojas, números clave, objeciones</span>
+      {/* Expanded Panel Overlay */}
+      {expandedPanel && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-8">
+          <div className="bg-white rounded-2xl w-full h-full max-w-7xl shadow-2xl overflow-hidden">
+            {expandedPanel === 'financial' ? (
+              <ProjectCashFlow
+                projectCost={projectCost}
+                weeksTimeline={weeksTimeline}
+                isExpanded={true}
+                onToggleExpand={() => setExpandedPanel(null)}
+              />
+            ) : (
+              <PreviewPanel
+                content={proposalContent}
+                isExpanded={true}
+                onToggleExpand={() => setExpandedPanel(null)}
+              />
+            )}
           </div>
-          <span className="text-gray-400 text-lg transform transition-transform duration-200"
-            style={{ transform: cheatSheetOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-            ▼
-          </span>
-        </button>
-
-        {cheatSheetOpen && (
-          <div className="border-t border-gray-200 p-4 animate-slideDown">
-            <div className="max-h-[300px] overflow-y-auto">
-              <CheatSheetTabs />
-            </div>
-          </div>
-        )}
-      </div>
-
-      <style jsx>{`
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            max-height: 0;
-          }
-          to {
-            opacity: 1;
-            max-height: 300px;
-          }
-        }
-        .animate-slideDown {
-          animation: slideDown 0.3s ease-out;
-        }
-      `}</style>
+        </div>
+      )}
     </div>
   );
 }
