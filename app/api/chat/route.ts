@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
@@ -116,10 +116,10 @@ export async function POST(req: NextRequest) {
 
     if (!process.env.ANTHROPIC_API_KEY) {
       console.error('ANTHROPIC_API_KEY is not configured');
-      return new Response(
-        JSON.stringify({ error: 'ANTHROPIC_API_KEY no configurada' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
+      return NextResponse.json({
+        error: 'ANTHROPIC_API_KEY no configurada',
+        success: false
+      }, { status: 500 });
     }
 
     const systemPrompt = createSystemPrompt();
@@ -171,15 +171,11 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Error in chat API:', error);
-    return new Response(
-      JSON.stringify({
-        error: 'Error interno del servidor',
-        message: error?.message || 'Unknown error'
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    return NextResponse.json({
+      error: 'Error interno del servidor',
+      message: error?.message || 'Unknown error',
+      success: false,
+      details: process.env.NODE_ENV === 'development' ? error?.message : undefined
+    }, { status: 500 });
   }
 }
