@@ -5,7 +5,7 @@
 [![Status](https://img.shields.io/badge/status-pilot-yellow)](https://github.com/intelguy8000/anthon_commercial_ai)
 [![License](https://img.shields.io/badge/license-Private-red)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
-[![Anthropic](https://img.shields.io/badge/Anthropic-Claude-blue)](https://anthropic.com)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-blue)](https://openai.com)
 
 ---
 
@@ -40,7 +40,7 @@ Los consultores comerciales (especialmente no-técnicos) enfrentan desafíos al:
 
 ### **Requisitos:**
 - Node.js 18+
-- Cuenta Anthropic con API key
+- Cuenta OpenAI con API key
 
 ### **Instalación:**
 
@@ -71,20 +71,20 @@ Abrir [http://localhost:3000/lupia](http://localhost:3000/lupia)
 │  LUPIA - Interfaz Web                                │
 ├────────────────┬─────────────────┬──────────────────┤
 │  Chat AI       │  Preview Live   │  Cheat Sheet     │
-│  (Claude 3.5)  │  (Markdown)     │  (Tips/Scripts)  │
+│  (GPT-4)       │  (Markdown)     │  (Tips/Scripts)  │
 └────────────────┴─────────────────┴──────────────────┘
          │                 │                 │
          └─────────────────┴─────────────────┘
                           │
                 ┌─────────▼─────────┐
-                │  Anthropic API    │
+                │  OpenAI API       │
                 │  (Streaming)      │
                 └───────────────────┘
 ```
 
 ### **Stack:**
 - **Frontend:** Next.js 14 + TypeScript + Tailwind CSS
-- **AI:** Anthropic Claude 3.5 Sonnet
+- **AI:** OpenAI GPT-4 / GPT-4 Turbo
 - **Deploy:** Vercel
 - **Auth:** NextAuth.js (futuro)
 
@@ -96,7 +96,7 @@ Abrir [http://localhost:3000/lupia](http://localhost:3000/lupia)
 anthon_commercial_ai/
 ├── app/                    # Next.js App Router
 │   ├── api/
-│   │   ├── chat/          # Endpoint streaming Claude
+│   │   ├── chat/          # Endpoint streaming OpenAI
 │   │   └── pdf/           # Generación de PDFs
 │   └── lupia/             # UI principal
 ├── components/            # Componentes React
@@ -104,7 +104,7 @@ anthon_commercial_ai/
 │   ├── markdown-preview.tsx
 │   └── cheat-sheet.tsx
 ├── lib/                   # Lógica de negocio
-│   ├── claude.ts          # Cliente Anthropic
+│   ├── openai.ts          # Cliente OpenAI
 │   ├── prompts.ts         # System prompts
 │   └── knowledge-base.ts  # Base de conocimiento
 ├── knowledge-base/        # Documentación comercial
@@ -122,7 +122,7 @@ anthon_commercial_ai/
 ## 🎨 Features
 
 ### **✅ Fase 1 (MVP - Activa)**
-- [x] Chat conversacional con Claude 3.5
+- [x] Chat conversacional con GPT-4
 - [x] Preview de propuesta en Markdown
 - [x] Cheat Sheet con tips de negociación
 - [ ] Streaming de respuestas
@@ -160,7 +160,7 @@ Este repositorio es **PRIVADO** y contiene información sensible de clientes.
 - ✅ API keys en variables de entorno (nunca en código)
 - ✅ Datos de clientes encriptados
 - ✅ Acceso restringido solo a equipo Loopera
-- ✅ No guardar conversaciones en logs de Anthropic
+- ✅ No guardar conversaciones en logs de OpenAI
 
 ---
 
@@ -194,7 +194,7 @@ vercel
 ### **Variables de Entorno (Vercel):**
 
 ```
-ANTHROPIC_API_KEY=sk-ant-xxx
+OPENAI_API_KEY=sk-xxx
 NEXTAUTH_SECRET=xxx
 NEXTAUTH_URL=https://lupia.vercel.app
 ```
@@ -251,7 +251,7 @@ Este es un proyecto privado. Solo el equipo de Loopera puede contribuir.
 ## 📝 Changelog
 
 ### **v0.1.0 (MVP) - Noviembre 2024**
-- ✅ Setup inicial Next.js + Anthropic
+- ✅ Setup inicial Next.js + OpenAI
 - ✅ Documentación completa del proyecto
 - ✅ Knowledge base con caso Estudiarte
 - 🚧 UI en desarrollo
@@ -262,7 +262,7 @@ Este es un proyecto privado. Solo el equipo de Loopera puede contribuir.
 
 - **Juan** - Tech Lead / Backend / Infraestructura
 - **Santiago Lopera** - Product Owner / Commercial Lead
-- **Claude (Anthropic)** - AI Copilot
+- **ChatGPT (OpenAI)** - AI Copilot
 
 ---
 

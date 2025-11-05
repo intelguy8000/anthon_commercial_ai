@@ -1,12 +1,12 @@
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { NextRequest, NextResponse } from 'next/server';
 
 // IMPORTANT: Runtime config for Vercel streaming support
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // FIXED: Inline knowledge base to avoid file system issues in serverless
@@ -1360,10 +1360,10 @@ export async function POST(req: NextRequest) {
   try {
     const { messages, useOpus = false } = await req.json();
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error('ANTHROPIC_API_KEY is not configured');
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not configured');
       return NextResponse.json({
-        error: 'ANTHROPIC_API_KEY no configurada',
+        error: 'OPENAI_API_KEY no configurada',
         success: false
       }, { status: 500 });
     }
@@ -1375,25 +1375,29 @@ export async function POST(req: NextRequest) {
       async start(controller) {
         try {
           // Choose model based on useOpus flag
-          const modelToUse = useOpus ? 'claude-opus-4-20250514' : 'claude-sonnet-4-5-20250929';
+          // useOpus=true -> GPT-4 Turbo (most capable)
+          // useOpus=false -> GPT-4o (fast and efficient)
+          const modelToUse = useOpus ? 'gpt-4-turbo-preview' : 'gpt-4o';
 
-          const response = await anthropic.messages.create({
+          const response = await openai.chat.completions.create({
             model: modelToUse,
-            max_tokens: 4096,
-            system: systemPrompt,
-            messages: messages.map((msg: { role: string; content: string }) => ({
-              role: msg.role,
-              content: msg.content,
-            })),
+            max_tokens: 8192,
+            messages: [
+              {
+                role: 'system',
+                content: systemPrompt,
+              },
+              ...messages.map((msg: { role: string; content: string }) => ({
+                role: msg.role,
+                content: msg.content,
+              })),
+            ],
             stream: true,
           });
 
           for await (const chunk of response) {
-            if (
-              chunk.type === 'content_block_delta' &&
-              chunk.delta.type === 'text_delta'
-            ) {
-              const text = chunk.delta.text;
+            const text = chunk.choices[0]?.delta?.content;
+            if (text) {
               controller.enqueue(
                 new TextEncoder().encode(
                   `data: ${JSON.stringify({ content: text })}\n\n`

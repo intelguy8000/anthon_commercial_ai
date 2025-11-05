@@ -202,7 +202,7 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
     } finally {
       setIsLoading(false);
       setAbortController(null);
-      // Reset Opus to false after using (one-time use)
+      // Reset Pro mode to false after using (one-time use)
       if (useOpus) {
         setUseOpus(false);
       }
@@ -337,7 +337,7 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
                   ? 'bg-purple-100 text-purple-700 border border-purple-300 font-semibold'
                   : 'bg-blue-100 text-blue-700'
               }`}>
-                {useOpus ? '🧠 Opus 4' : '⚡ Sonnet 4.5'}
+                {useOpus ? '🧠 GPT-4 Turbo' : '⚡ GPT-4o'}
               </span>
             )}
           </div>
@@ -375,7 +375,7 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
                 ⏹ Stop
               </button>
             )}
-            {/* LoopAI Pro button - one-time Opus trigger */}
+            {/* LoopAI Pro button - one-time GPT-4 Turbo trigger */}
             {!isLoading && (
               <button
                 onClick={() => setUseOpus(!useOpus)}
@@ -384,7 +384,7 @@ export default function ChatPanel({ onProposalUpdate, onFinancialUpdate, isExpan
                     ? 'bg-purple-600 text-white border-2 border-purple-700 hover:bg-purple-700'
                     : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300'
                 }`}
-                title={useOpus ? "Siguiente mensaje usará Opus 4.1" : "Activar LoopAI Pro (Opus 4.1)"}
+                title={useOpus ? "Siguiente mensaje usará GPT-4 Turbo" : "Activar LoopAI Pro (GPT-4 Turbo)"}
               >
                 {useOpus ? '🧠 Pro ON' : '🧠 LoopAI Pro'}
               </button>
