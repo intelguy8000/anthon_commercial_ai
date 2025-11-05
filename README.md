@@ -25,14 +25,12 @@ Los consultores comerciales (especialmente no-técnicos) enfrentan desafíos al:
 
 ---
 
-## 🎯 Caso de Uso Piloto: Estudiarte
+## 🎯 Cómo Funciona
 
-**Cliente:** Agencia de viajes educativos en Colombia
-**Proyecto:** Plataforma web de gestión integral
-**Inversión:** $38M-40M COP
-**Desafío:** Primera propuesta grande de Loopera
-
-**Ver documentación completa:** [`docs/PROJECT_OVERVIEW.md`](docs/PROJECT_OVERVIEW.md)
+1. **Agrega contexto** de tu cliente/proyecto en la carpeta `knowledge-base/`
+2. **Chatea con LoopIA** para crear propuestas, responder objeciones, calcular precios
+3. **Usa hashtags** como `#lapropuesta` para actualizar paneles en tiempo real
+4. **Exporta a PDF** tu propuesta final con estilos profesionales
 
 ---
 
@@ -98,24 +96,19 @@ anthon_commercial_ai/
 │   ├── api/
 │   │   ├── chat/          # Endpoint streaming OpenAI
 │   │   └── pdf/           # Generación de PDFs
-│   └── lupia/             # UI principal
+│   └── lupia/             # UI principal (página principal)
 ├── components/            # Componentes React
-│   ├── chat-panel.tsx
-│   ├── markdown-preview.tsx
-│   └── cheat-sheet.tsx
-├── lib/                   # Lógica de negocio
-│   ├── openai.ts          # Cliente OpenAI
-│   ├── prompts.ts         # System prompts
-│   └── knowledge-base.ts  # Base de conocimiento
-├── knowledge-base/        # Documentación comercial
-│   ├── PROPUESTA_ESTUDIARTE_FINAL_V2.md
-│   ├── GUIA_NEGOCIACION_ESTUDIARTE.md
-│   ├── ANALISIS_PAGOS_ESTUDIARTE.md
-│   └── COSTOS_OPTIMIZADOS_ESTUDIARTE.md
+│   ├── chat-panel.tsx     # Chat con IA
+│   ├── preview-panel.tsx  # Vista previa de propuestas
+│   ├── financial-model.tsx # Modelo financiero
+│   └── cheat-sheet.tsx    # Scripts y tips
+├── knowledge-base/        # 📚 AGREGA TU CONTEXTO AQUÍ
+│   └── README.md          # Guía de uso
 ├── docs/                  # Documentación técnica
-│   └── PROJECT_OVERVIEW.md
 └── README.md
 ```
+
+**Nota:** La carpeta `knowledge-base/` está vacía y lista para que agregues tu información específica.
 
 ---
 
@@ -146,9 +139,8 @@ anthon_commercial_ai/
 
 ## 📚 Documentación
 
-- **[Project Overview](docs/PROJECT_OVERVIEW.md)** - Visión completa del proyecto
-- **[Guía de Negociación](knowledge-base/GUIA_NEGOCIACION_ESTUDIARTE.md)** - Scripts y objeciones
-- **[Propuesta Estudiarte](knowledge-base/PROPUESTA_ESTUDIARTE_FINAL_V2.md)** - Caso de uso piloto
+- **[Knowledge Base](knowledge-base/README.md)** - Cómo agregar contexto de tu proyecto
+- **[Configuración](SETUP.md)** - Guía de instalación paso a paso
 
 ---
 
@@ -201,16 +193,14 @@ NEXTAUTH_URL=https://lupia.vercel.app
 
 ---
 
-## 📊 Métricas de Éxito
+## 📊 Beneficios
 
-### **Piloto Estudiarte:**
-
-| Métrica | Antes | Con Lupia | Mejora |
-|---------|-------|-----------|--------|
-| Tiempo prep propuesta | 20h | <5h | 75% ↓ |
-| Errores en números | 3-5 | 0-1 | 90% ↓ |
-| Confianza del consultor | 6/10 | 9/10 | 50% ↑ |
-| **Cierre de deal** | - | **Meta: SÍ** | - |
+| Aspecto | Antes de Lupia | Con Lupia |
+|---------|---------------|-----------|
+| Tiempo prep propuesta | 10-20h | <5h |
+| Errores en números | Frecuentes | Mínimos |
+| Respuesta a objeciones | Improvisada | Estratégica |
+| Confianza del consultor | Variable | Alta |
 
 ---
 
